@@ -1,0 +1,25 @@
+# 权重与大数据（不入库）
+weights/
+*.safetensors
+*.bin
+*.ckpt
+ref/train_batch.npz
+ref/train_step_ref.npz
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Jittor 编译缓存
+*.jit_cache/
+.cache/
+
+# 系统/编辑器
+.DS_Store
+.idea/
+.vscode/
+*.log

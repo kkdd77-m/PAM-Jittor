@@ -1,0 +1,15 @@
+# Jittor 主框架（CUDA 12.1 构建；请按 docs/SETUP_AUTODL.md 安装）
+jittor==1.3.11
+
+# PyTorch 对照基准（可选，仅用于生成对齐基准，需 cu121 wheel）
+# 安装：pip install torch==2.1.2 --index-url https://download.pytorch.org/whl/cu121
+# torch==2.1.2
+
+# 通用依赖
+numpy>=1.24,<2.0
+einops>=0.7
+accelerate>=0.27
+safetensors>=0.4
+matplotlib>=3.7
+pillow>=9.0
+tqdm>=4.65
