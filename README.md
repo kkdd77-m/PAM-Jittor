@@ -61,8 +61,10 @@ PAM-Jittor/
 │   ├── pt_train_curve.py         #   减层训练 loss 曲线对照（产出 PyTorch 基准）
 │   ├── pt_train_step.py          #   单步前向 + 反向梯度对照
 │   ├── pt_full_loop.py           #   28 步全链路采样对照
-│   ├── pt_gen_ref.py / pt_decode.py / pt_train_batch.py / pt_cn_save.py
-│   └── PAM/appearance_gen/       #   官方 PAM 第一阶段源码（subtree，见下）
+│   └── pt_gen_ref.py / pt_decode.py / pt_train_batch.py / pt_cn_save.py ...
+├── PAM/appearance_gen/           # 官方 PAM 第一阶段 PyTorch 源码（供对照脚本 import）
+├── ref/                          # 对齐证据：loss 曲线 npy、共享初始化、对齐日志
+├── weights/                      # （不入库，自行放置）flux-dev / VAE 权重
 ├── scripts/                      # 一键运行脚本与说明
 ├── docs/
 │   ├── ALIGNMENT.md              # ★ 与 PyTorch 对齐报告（前向/反向/训练曲线）
@@ -70,9 +72,18 @@ PAM-Jittor/
 │   ├── SETUP_AUTODL.md           # AutoDL A800 环境搭建记录
 │   └── DOWNLOAD_CHECKLIST.md     # 从数据盘补齐大文件 / 权重的清单
 └── assets/
-    ├── loss_curve_compare.png    # ★ PyTorch vs Jittor 训练 loss 对照图
-    └── (采样可视化图)
+    └── loss_curve_compare.png    # ★ PyTorch vs Jittor 训练 loss 对照图
 ```
+
+> **路径约定**：脚本中的绝对路径以 `/data/PAM` 为工程根（与 AutoDL 数据盘一致）。
+> 在 Linux 上把仓库软链接到该路径即可直接运行：
+>
+> ```bash
+> sudo ln -s "$(pwd)" /data/PAM        # 在仓库根目录执行
+> ```
+>
+> 这样 `/data/PAM/jittor_pam`、`/data/PAM/torch_ref`、`/data/PAM/PAM/appearance_gen`、
+> `/data/PAM/ref`、`/data/PAM/weights` 都能被脚本正确找到（Windows 下可直接在 WSL/Linux 环境运行，或自行修改路径）。
 
 > 权重（约 23 GB 的 `flux1-dev.safetensors`、`ae.safetensors`）与预处理数据 `train_batch.npz` 受许可/体积限制
 > **不随仓库分发**，获取方式见 [数据与权重准备](#5-数据与权重准备)。
@@ -108,13 +119,14 @@ pip install torch==2.1.2 --index-url https://download.pytorch.org/whl/cu121
 pip install -r requirements.txt
 ```
 
-把官方 PAM 第一阶段源码放入 `torch_ref/PAM/appearance_gen/`（供 PyTorch 对照脚本 import）：
+官方 PAM 第一阶段源码已随仓库放在 `PAM/appearance_gen/`（供 PyTorch 对照脚本 import）。
+如需重新获取：
 
 ```bash
-# 方式一：直接下载官方仓库 zip（网络受限时比 git clone 稳）
+# 直接下载官方仓库 zip（网络受限时比 git clone 稳）
 curl -L https://codeload.github.com/GasaiYU/PAM/zip/refs/heads/main -o PAM.zip
 unzip PAM.zip
-mkdir -p torch_ref/PAM && cp -r PAM-main/appearance_gen torch_ref/PAM/
+mkdir -p PAM && cp -r PAM-main/appearance_gen PAM/
 ```
 
 ---
@@ -211,9 +223,13 @@ python3 jittor_pam/jt_a800.py 20 3e-4
 | `torch_ref/pt_train_step.py` | PyTorch 单步前向 + ControlNet 反向梯度基准 |
 | `torch_ref/pt_train_curve.py` | PyTorch 减层训练 loss 曲线 + 共享初始化导出 |
 | `jittor_pam/jt_a800.py` | Jittor 减层训练 / loss 曲线对齐主脚本 |
+| `jittor_pam/jt_full_loop.py` | Jittor 28 步全链路采样 |
+| `jittor_pam/jt_decode.py` / `jt_vae_test.py` | Jittor VAE 解码 / 编解码对齐 |
+| `jittor_pam/jt_cn_test.py` / `jt_train_step.py` | Jittor ControlNet 前向 / 单步反向梯度对齐 |
+| `jittor_pam/jt_train_batch.py` | Jittor 侧 batch 预处理对照 |
 
-> Jittor 侧的采样、VAE、单步梯度对齐脚本在数据盘 `jittor_pam/` 目录内，下载清单见
-> [docs/DOWNLOAD_CHECKLIST.md](docs/DOWNLOAD_CHECKLIST.md)。
+> 早期探索与已验证的不可行方案保留在 `jittor_pam/archive/`（`early_scaffold/`、`dead_ends/`），
+> 便于追溯复现过程；正式结果以主脚本与 [docs/ALIGNMENT.md](docs/ALIGNMENT.md) 为准。
 
 ---
 
