@@ -1,11 +1,10 @@
 # PAM-Jittor：用 Jittor 复现 PAM 第一阶段（Flux-dev + Double ControlNet 外观生成）
 
-> 「新芽计划」Jittor 框架生态培育作品
 >
 > 论文：**PAM: Pose-Appearance-Motion for Articulated Object Manipulation Video Generation（CVPR 2026）**
 > 官方仓库（PyTorch）：<https://github.com/GasaiYU/PAM>
 >
-> 本项目在开工前检索确认：互联网上**尚无 PAM 的 Jittor 实现**，亦未与 Jittor 官方新芽作品列表重复。
+> 本项目在开工前检索确认：互联网上**尚无 PAM 的 Jittor 实现**。
 
 ---
 
@@ -21,7 +20,7 @@ PAM 是一个三阶段的铰接物体操作视频生成框架：
 2. Motion Generation：基于 CogVideoX 的运动生成；
 3. Pose Generation：基于 GraspXL 的姿态生成。
 
-### 复现范围（重要）
+### 复现范围
 
 受单卡显存与时间限制，本项目**完整复现第一阶段 Appearance Generation**（FLUX-dev + Double ControlNet 条件出图），
 包括：模型结构的 Jittor 移植、权重加载、28 步全链路采样出图、VAE 编解码、ControlNet 前向/反向，以及
